@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 import random
+import json
 
 letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -30,6 +31,12 @@ def save():
     website = input1.get()
     email = input2.get()
     password = input3.get()
+    new_data={
+        website:{
+            "email":email,
+            "password":password,
+        }
+    }
 
     is_empty=(len(website)==0 or len(email)==0 or len(password)==0)
 
@@ -41,8 +48,19 @@ def save():
         is_right=messagebox.askokcancel(title=website,message=f"this are the details \n Website: {website}\n Email: {email} \n Password: {password}")
 
         if is_right:
-            with open("file.txt","a") as data_file:
-                data_file.write(f"{website} | {email} | {password}\n")
+            try:
+                with open("file.json","r") as data_file:
+                    # json.dump(new_data,data_file,indent=4)
+                    data=json.load(data_file)
+                    data.update(new_data)
+            except FileNotFoundError:
+                with open("file.json", "w") as data_file:
+                    json.dump(new_data,data_file,indent=4)
+            else:
+                data.update(new_data)
+                with open("file.json","w") as data_file:
+                    json.dump(data,data_file,indent=4)
+            finally:
                 input1.delete(0,END)
                 input3.delete(0, END)
 
