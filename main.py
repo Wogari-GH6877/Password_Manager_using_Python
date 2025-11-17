@@ -53,7 +53,7 @@ def save():
                     # json.dump(new_data,data_file,indent=4)
                     data=json.load(data_file)
                     data.update(new_data)
-            except FileNotFoundError:
+            except (FileNotFoundError,json.JSONDecodeError):
                 with open("file.json", "w") as data_file:
                     json.dump(new_data,data_file,indent=4)
             else:
@@ -66,6 +66,26 @@ def save():
 
 def generate():
     input3.insert(0,mypassword)
+
+
+def find_password():
+    website = input1.get()
+
+    try:
+
+
+        with open("file.json") as data_file:
+            data=json.load(data_file)
+    except FileNotFoundError:
+        messagebox.showinfo(title="Error",message="No Data File Found. ")
+    else:
+        if website in data:
+            email=data[website]["email"]
+            password=data[website]["password"]
+            messagebox.showinfo(title=website,message=f"Email: {email}\n Password: {password}")
+        else:
+            messagebox.showinfo(title="Error" ,message=f"the no details for this {website} website")
+
 
 window=Tk()
 # window.minsize(height=400,width=600)
@@ -102,7 +122,8 @@ input3.grid(row=3,column=1)
 
 
 #Buttons
-
+search_button=Button(text="Search Button",command=find_password)
+search_button.grid(column=3,row=1)
 generate_button=Button(text="Generate Password",command=generate)
 generate_button.grid(column=2,row=3)
 
